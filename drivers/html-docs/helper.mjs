@@ -1,10 +1,10 @@
-function myFunc(){
-    var p = document.getElementById("navbar")
-    var content = document.createTextNode("hi!")
-    p.appendChild(content);
-}
+var timeouts = [];
 
 function homeEle(){
+    for(let i in timeouts){
+        clearTimeout(timeouts[i]);
+    }
+    timeouts = [];
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");
@@ -75,7 +75,7 @@ function skillsEle(){
         return nodes;
     }
 
-    function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal){
+    function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal, yBase){
         
         var g = selector.append("g").attr("id","item1")
             .attr("transform","translate("+translateX+","+translateY+")");
@@ -141,7 +141,7 @@ function skillsEle(){
 
         selector.append("text")
             .attr("x",centre.x + translateX)
-            .attr("y",centre.y + 250 + translateY*(data.length/15+Math.random()))
+            .attr("y",centre.y + yBase + translateY)
             .text(textVal);
     }
 
@@ -155,14 +155,15 @@ function skillsEle(){
           .attr('y', d => d.y)
       }
 
-    chart(300, 500, languages, svg, 25, 100, 200, 0, "Languages");
-    setTimeout(function(){
-        chart(300, 500, frameWorks, svg, 300, 100, 400, 500, "Frameworks");
+    chart(300, 500, languages, svg, 25, 100, 200, 0, "Languages", 125);
+    var t1 = setTimeout(function(){
+        chart(300, 500, frameWorks, svg, 300, 100, 400, 500, "Frameworks", 200);
         }, 2000)
-    setTimeout(function(){
-        chart(300, 500, tools, svg, 625, 100, 600, 300, "Tools");
+    var t2 = setTimeout(function(){
+        chart(300, 500, tools, svg, 650, 100, 600, 300, "Tools", 200);
         }, 4000)
-    
+    timeouts.push(t1);
+    timeouts.push(t2);
 }
 
 function expEle(){
