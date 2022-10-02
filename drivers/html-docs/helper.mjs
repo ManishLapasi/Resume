@@ -1,35 +1,79 @@
 var timeouts = [];
 
-function homeEle(){
+function clearTimeouts(){
     for(let i in timeouts){
         clearTimeout(timeouts[i]);
     }
     timeouts = [];
+}
+
+function homeEle(){
+
+    clearTimeouts();
     d3.select("#main").selectAll("*").remove();
+
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");
+
+    var leftAlign = "10%";
+
     var text = g.append("text")
-                .attr("x","50%").attr("y","50%")
+                .attr("x",leftAlign).attr("y","30%")
                 .attr("dominant-baseline","middle")
-                .attr("text-anchor","middle")
+                .attr("text-anchor","left")
                 .style("inline-size","50px");
     text.append("tspan")
-        .style("font-size","200%")
+        .style("font-size","150%")
+        .attr("display","block")
         .text("Hi!");
     text.append("tspan")
-        .attr("x","50%").attr("y","55%")
-        .style("font-size","200%")
-        .style("text-align","center")
-        .text("I'm Manikandan Lapasi!");
+        .attr("x",leftAlign).attr("y","40%")
+        .style("font-size","300%")
+        .style("text-align","left")
+        .attr("display","block")
+        .text("I'm Manikandan Lapasi.");
     text.append("tspan")
-        .attr("x","50%").attr("y","60%")
-        .style("text-align","center")
-        .text("I dabble in software development, and make a living out of it!");
+        .attr("x",leftAlign).attr("y","50%")
+        .style("font-size","300%")
+        .style("text-align","left")
+        .style("margin-bottom","50px")
+        .attr("display","block")
+        .text("I write code.");
+    text.append("br");
+    lines = [
+        {value: "I dabble in software development, and make a living out of it.", dy: "70px"},
+        {value: "I've worked as software developer and as a site reliability engineer.", dy: "30px"},
+        {value: "I'm currently pursuing a master's in CS at Georgia Tech.", dy: "30px"}
+    ]
+    for(let line in lines){
+        text.append("tspan")
+            .attr("width","100px")
+            .style("font-size","150%")
+            .attr("x",leftAlign).attr("dy",lines[line].dy)
+            .style("text-align","left")
+            .text(lines[line].value);
+    }
 }
 
 function skillsEle(){
+    clearTimeouts();
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
+    var leftAlign = "70%"
+    var text = svg.append("text")
+    lines = [
+        {value: "I dabble in software development, and make a living out of it.", dy: "170px"},
+        {value: "I've worked as software developer and as a site reliability engineer.", dy: "20px"},
+        {value: "I'm currently pursuing a master's in CS at Georgia Tech.", dy: "20px"}
+    ]
+    for(let line in lines){
+        text.append("tspan")
+            .attr("width","100px")
+            .style("font-size","100%")
+            .attr("x",leftAlign).attr("dy",lines[line].dy)
+            .style("text-align","left")
+            .text(lines[line].value);
+    }
 
     var languages = [
         {id:"python", value: 10},
@@ -52,7 +96,7 @@ function skillsEle(){
     ];
 
     var frameWorks = [
-        {id:"Tensorflow", value: 5},
+        {id:"Tensorflow", value: 6},
         {id:"Flask", value: 8},
         {id:"ReactJS", value: 6},
         {id:"D3", value: 8},
@@ -91,7 +135,7 @@ function skillsEle(){
         }
 
         // create a force simulation and add forces to it
-        const simulation = d3.forceSimulation()
+        var simulation = d3.forceSimulation()
         .force('charge', d3.forceManyBody().strength(charge))
         .force('x', d3.forceX().strength(forceStrength).x(centre.x))
         .force('y', d3.forceY().strength(forceStrength).y(centre.y))
@@ -114,7 +158,7 @@ function skillsEle(){
 
         console.log(nodes);
 
-        const elements = g.selectAll('.bubble')
+        var elements = g.selectAll('.bubble')
         .data(nodes, d => d.id)
         .enter()
         .append('g')
@@ -139,34 +183,37 @@ function skillsEle(){
         .on('tick', ticked)
         .restart();
 
+        function ticked() {
+            bubbles
+              .attr('cx', d => d.x)
+              .attr('cy', d => d.y)
+        
+            labels
+              .attr('x', d => d.x)
+              .attr('y', d => d.y)
+          }
+
         selector.append("text")
             .attr("x",centre.x + translateX)
             .attr("y",centre.y + yBase + translateY)
+            .style("text-align","center")
             .text(textVal);
     }
 
-    function ticked() {
-        bubbles
-          .attr('cx', d => d.x)
-          .attr('cy', d => d.y)
-    
-        labels
-          .attr('x', d => d.x)
-          .attr('y', d => d.y)
-      }
 
-    chart(300, 500, languages, svg, 25, 100, 200, 0, "Languages", 125);
+    chart(300, 400, languages, svg, 0, 50, 200, 0, "Languages", 125);
     var t1 = setTimeout(function(){
-        chart(300, 500, frameWorks, svg, 300, 100, 400, 500, "Frameworks", 200);
+        chart(300, 400, frameWorks, svg, 250, 50, 400, 500, "Frameworks", 225);
         }, 2000)
     var t2 = setTimeout(function(){
-        chart(300, 500, tools, svg, 650, 100, 600, 300, "Tools", 200);
+        chart(300, 400, tools, svg, 550, 50, 600, 300, "Tools", 200);
         }, 4000)
     timeouts.push(t1);
     timeouts.push(t2);
 }
 
 function expEle(){
+    clearTimeouts();
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");

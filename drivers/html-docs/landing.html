@@ -4,19 +4,14 @@
     <script type = "text/javascript" src="html-docs/helper.mjs"></script>
     <script type="text/javascript" src="node_modules/d3/dist/d3.min.js"></script>
 </head>
-<body>
+<body onload="homeEle()">
     <ul id="navEle">
-        <li><a onclick="homeEle()">Home</a></li>
+        <li><a onclick="homeEle()">About</a></li>
         <li><a onclick="skillsEle()">Skills</a></li>
         <li><a onclick="expEle()">Experience</a></li>
     </ul>
     <svg id="main">
-        <g id="item1">
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" style="inline-size: 50px;">
-                <tspan style="font-size: 200%;">Hi!</tspan>
-                <tspan x="50%" y = 55% style="font-size: 200%; text-align: center;">I'm Manikandan Lapasi!</tspan>  
-                <tspan x="50%" y="60%" style="text-align: center;">I dabble in software development, and make a living out of it!</tspan>
-            </text>  
+        <g id="item1">  
         </g>
     </svg>
 </body>
