@@ -30,20 +30,34 @@ function homeEle(){
 function skillsEle(){
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
-    var g = svg.append("g").attr("id","item1")
-            .attr("width","400")
-            .attr("height","300");
-    var text = g.append("text")
-                .attr("x","50%").attr("y","50%")
-                .attr("dominant-baseline","middle")
-                .attr("text-anchor","middle")
-                .style("inline-size","50px");
-    text.append("tspan")
-        .style("font-size","200%")
-        .text("Skillz!");
 
-    var skills = [
-        {id:"python", value: 5},{id:"C++", value: 3},{id:"erlang", value: 2}
+    var languages = [
+        {id:"python", value: 10},
+        {id:"C++", value: 4},
+        {id:"R", value: 4},
+        {id:"Powershell", value: 4},
+        {id:"SQL", value: 8},
+        {id:"NodeJS", value: 8}
+    ];
+
+    var tools = [
+        {id:"Docker", value: 8},
+        {id:"Terraform", value: 9},
+        {id:"Ansible", value: 6},
+        {id:"Kubernetes", value: 8},
+        {id:"Grafana", value: 8},
+        {id:"Prometheus", value: 8},
+        {id:"Matlab", value: 6},
+        {id:"Azure", value: 8}
+    ];
+
+    var frameWorks = [
+        {id:"Tensorflow", value: 5},
+        {id:"Flask", value: 8},
+        {id:"ReactJS", value: 6},
+        {id:"D3", value: 8},
+        {id:"MongoDB", value: 6},
+        {id:"Neo4j", value: 6}
     ];
 
     // set up colour scale
@@ -51,18 +65,20 @@ function skillsEle(){
     .domain(["1", "2", "3", "5", "99"])
     .range(["#0074D9", "#7FDBFF", "#39CCCC", "#3D9970", "#AAAAAA"]);
 
-    function createNodes(data, rScale){
+    function createNodes(data, rScale, iniX, iniY){
         const nodes = data.map(d => ({
             ...d,
             radius: rScale(+d.value),
-            x : Math.random()*400,
-            y : Math.random()*400
+            x : Math.random()*100 + iniX,
+            y : Math.random()*100 + iniY
         }))
         return nodes;
     }
 
-    function chart(width, height, data){
-
+    function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal){
+        
+        var g = selector.append("g").attr("id","item1")
+            .attr("transform","translate("+translateX+","+translateY+")");
         // location to centre the bubbles
         const centre = { x: width/2, y: height/2 };
 
@@ -94,7 +110,7 @@ function skillsEle(){
             .domain([0,maxSize])
             .range([25,50])
 
-        nodes = createNodes(data, rScale);
+        nodes = createNodes(data, rScale,iniX, iniY);
 
         console.log(nodes);
 
@@ -122,6 +138,11 @@ function skillsEle(){
         simulation.nodes(nodes)
         .on('tick', ticked)
         .restart();
+
+        selector.append("text")
+            .attr("x",centre.x + translateX)
+            .attr("y",centre.y + 250 + translateY*(data.length/15+Math.random()))
+            .text(textVal);
     }
 
     function ticked() {
@@ -134,8 +155,14 @@ function skillsEle(){
           .attr('y', d => d.y)
       }
 
-    chart(940, 500, skills);
-
+    chart(300, 500, languages, svg, 25, 100, 200, 0, "Languages");
+    setTimeout(function(){
+        chart(300, 500, frameWorks, svg, 300, 100, 400, 500, "Frameworks");
+        }, 2000)
+    setTimeout(function(){
+        chart(300, 500, tools, svg, 625, 100, 600, 300, "Tools");
+        }, 4000)
+    
 }
 
 function expEle(){
