@@ -61,19 +61,29 @@ function skillsEle(){
     var svg = d3.select("#main");
     var leftAlign = "70%"
     var text = svg.append("text")
-    lines = [
-        {value: "I dabble in software development, and make a living out of it.", dy: "170px"},
-        {value: "I've worked as software developer and as a site reliability engineer.", dy: "20px"},
-        {value: "I'm currently pursuing a master's in CS at Georgia Tech.", dy: "20px"}
-    ]
-    for(let line in lines){
-        text.append("tspan")
-            .attr("width","100px")
-            .style("font-size","100%")
-            .attr("x",leftAlign).attr("dy",lines[line].dy)
-            .style("text-align","left")
-            .text(lines[line].value);
+    var para1 = "My background in soft-dev is equal parts academic and ;professional. I've taken up courses on the mathematics ;behind software tech and on their applications. I've applied ;these learnings at my internships while upskilling ;myself with the current industry standards. ; ; ;I'm a huge believer in automation - if there's a way to ;automate a menial task, I code away.";
+    var para2 = "I've interned at a few software-based companies and ;worked as a soft-dev / site-reliability engineer. These make ;up the bulk of my expertise. I've also worked on college-level ;projects and written a paper in UAV path-planning."
+    
+    function writeDesc(data, dyIni){
+        var p = data.split(";")
+    
+        for(let line in p){    
+            if(line==0){dy = dyIni;}
+            else{dy = "25px";}
+            if(p[line]==" "){p[line] = "\u00A0"}
+
+            text.append("tspan")
+                .attr("width","100px")
+                .style("font-size","100%")
+                .attr("x",leftAlign)
+                .attr("dy",dy)
+                .style("text-align","left")
+                .text(p[line])  ;
+            }
     }
+    
+    writeDesc(para1, "170px");
+    writeDesc(para2, "170px");
 
     var languages = [
         {id:"python", value: 10},
@@ -102,6 +112,13 @@ function skillsEle(){
         {id:"D3", value: 8},
         {id:"MongoDB", value: 6},
         {id:"Neo4j", value: 6}
+    ];
+
+    var areas = [
+        {id:"Back-end", value: 8},
+        {id:"Front-end", value: 6},
+        {id:"Reliability", value: 8},
+        {id:"Dev-Ops", value: 6}
     ];
 
     // set up colour scale
@@ -147,7 +164,7 @@ function skillsEle(){
         // yay, bubbles !!
 
         const maxSize= d3.max(data, d => +d.value);
-        console.log(maxSize);
+        //console.log(maxSize);
 
         // radius scale !!
         const rScale = d3.scalePow().exponent(2)
@@ -156,7 +173,7 @@ function skillsEle(){
 
         nodes = createNodes(data, rScale,iniX, iniY);
 
-        console.log(nodes);
+        //console.log(nodes);
 
         var elements = g.selectAll('.bubble')
         .data(nodes, d => d.id)
@@ -200,6 +217,41 @@ function skillsEle(){
             .text(textVal);
     }
 
+    function barchart(width, height, data, selector, translateX, translateY)
+    {
+        var g = selector.append("g").attr("id","item1")
+            .attr("transform","translate("+translateX+","+translateY+")");
+
+        var xScale = d3.scaleLinear().range([0,width]);
+        var yScale = d3.scaleBand().range([0,height]).padding(0.8);
+
+        xScale.domain([0,10]);
+        yScale.domain(data.map(function(d){return d.id;}));
+
+        g.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", "0")
+            .attr("y", function(d){return yScale(d.id)})
+            .attr("width", function(d){return xScale(d.value)})
+            .attr("height", yScale.bandwidth());
+
+        g.selectAll(".text")
+            .data(data)
+            .enter()
+            .append("text")
+            .attr("x","0")
+            .attr("dx","-10px")
+            .attr("text-anchor","end")
+            .attr("y",function(d){return yScale(d.id);})
+            .attr("dy",yScale.bandwidth())
+            .attr("stroke","red")
+            .text(function(d){return d.id;});
+    }
+
+    barchart(600, 200, areas, svg, 200, 500);
 
     chart(300, 400, languages, svg, 0, 50, 200, 0, "Languages", 125);
     var t1 = setTimeout(function(){
@@ -210,6 +262,7 @@ function skillsEle(){
         }, 4000)
     timeouts.push(t1);
     timeouts.push(t2);
+
 }
 
 function expEle(){
