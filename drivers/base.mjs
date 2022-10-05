@@ -39,9 +39,13 @@ app.post('/process_post', function(req, res){
     res.end(JSON.stringify(response));
 })
 
+app.get('/getResume', function(req, res){
+    res.sendFile(path.join(__dirname, 'resume', 'Manikandan_Lapasi_CV.pdf'));
+});
+
 app.get('/html-docs/helper.mjs', function (req, res) {
     res.sendFile(path.join(__dirname, 'html-docs', 'helper.mjs'));
-  });
+});
 
 app.get('/node_modules/d3/dist/d3.min.js', function(req, res) {
     res.sendFile(path.join(__dirname, 'node_modules/d3/dist', 'd3.min.js'));

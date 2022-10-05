@@ -55,6 +55,34 @@ function homeEle(){
     }
 }
 
+function createNodes(data, rScale, iniX, iniY){
+    const nodes = data.map(d => ({
+        ...d,
+        radius: rScale(+d.value),
+        x : Math.random()*100 + iniX,
+        y : Math.random()*100 + iniY
+    }))
+    return nodes;
+}
+
+function writeDesc(data, dyIni, selector, dxIni){
+    var p = data.split(";")
+
+    for(let line in p){    
+        if(line==0){dy = dyIni;}
+        else{dy = "25px";}
+        if(p[line]==" "){p[line] = "\u00A0"}
+
+        selector.append("tspan")
+            .attr("width","100px")
+            .style("font-size","100%")
+            .attr("x",dxIni)
+            .attr("dy",dy)
+            .style("text-align","left")
+            .text(p[line])  ;
+        }
+}
+
 function skillsEle(){
     clearTimeouts();
     d3.select("#main").selectAll("*").remove();
@@ -62,28 +90,10 @@ function skillsEle(){
     var leftAlign = "70%"
     var text = svg.append("text")
     var para1 = "My background in soft-dev is equal parts academic and ;professional. I've taken up courses on the mathematics ;behind software tech and on their applications. I've applied ;these learnings at my internships while upskilling ;myself with the current industry standards. ; ; ;I'm a huge believer in automation - if there's a way to ;automate a menial task, I code away.";
-    var para2 = "I've interned at a few software-based companies and ;worked as a soft-dev / site-reliability engineer. These make ;up the bulk of my expertise. I've also worked on college-level ;projects and written a paper in UAV path-planning."
-    
-    function writeDesc(data, dyIni){
-        var p = data.split(";")
-    
-        for(let line in p){    
-            if(line==0){dy = dyIni;}
-            else{dy = "25px";}
-            if(p[line]==" "){p[line] = "\u00A0"}
-
-            text.append("tspan")
-                .attr("width","100px")
-                .style("font-size","100%")
-                .attr("x",leftAlign)
-                .attr("dy",dy)
-                .style("text-align","left")
-                .text(p[line])  ;
-            }
-    }
-    
-    writeDesc(para1, "170px");
-    writeDesc(para2, "170px");
+    var para2 = "I've interned at a few software-based companies and ;worked as a soft-dev / site-reliability engineer. These make ;up the bulk of my expertise. I've also worked on college-level ;projects and written a paper in UAV path-planning.";
+   
+    writeDesc(para1, "170px", text, leftAlign);
+    writeDesc(para2, "170px", text, leftAlign);
 
     var languages = [
         {id:"python", value: 10},
@@ -126,16 +136,6 @@ function skillsEle(){
     .domain(["1", "2", "3", "5", "99"])
     .range(["#0074D9", "#7FDBFF", "#39CCCC", "#3D9970", "#AAAAAA"]);
 
-    function createNodes(data, rScale, iniX, iniY){
-        const nodes = data.map(d => ({
-            ...d,
-            radius: rScale(+d.value),
-            x : Math.random()*100 + iniX,
-            y : Math.random()*100 + iniY
-        }))
-        return nodes;
-    }
-
     function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal, yBase){
         
         var g = selector.append("g").attr("id","item1")
@@ -164,16 +164,13 @@ function skillsEle(){
         // yay, bubbles !!
 
         const maxSize= d3.max(data, d => +d.value);
-        //console.log(maxSize);
 
         // radius scale !!
         const rScale = d3.scalePow().exponent(2)
             .domain([0,maxSize])
             .range([25,50])
 
-        nodes = createNodes(data, rScale,iniX, iniY);
-
-        //console.log(nodes);
+        nodes = createNodes(data, rScale, iniX, iniY);
 
         var elements = g.selectAll('.bubble')
         .data(nodes, d => d.id)
@@ -247,7 +244,7 @@ function skillsEle(){
             .attr("text-anchor","end")
             .attr("y",function(d){return yScale(d.id);})
             .attr("dy",yScale.bandwidth())
-            .attr("stroke","red")
+            .attr("stroke","rgb(85, 33, 32)")
             .text(function(d){return d.id;});
     }
 
@@ -270,12 +267,101 @@ function expEle(){
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");
-    var text = g.append("text")
-                .attr("x","50%").attr("y","50%")
-                .attr("dominant-baseline","middle")
-                .attr("text-anchor","middle")
-                .style("inline-size","50px");
-    text.append("tspan")
-        .style("font-size","200%")
-        .text("Expertise!");
+    var width = 1300, height = 600;
+
+    var data = {
+        "nodes":[
+            {id: 0, name: "Insti", year: "2018",value: "Did some stuff"},
+            {id: 1, name: "GreyOrange Robotics", year: "2019", value: "Did some more stuff"},
+            {id: 2, name: "Insti", year: "2020", value: "Graduated in 2020, masters in robotics"},
+            {id: 3, name: "Honeywell", year: "2020", value: "Worked as a SRE"},
+            {id: 4, name: "GaTech", year: "2022", value: "Started MS in CS"}
+        ],
+        "links":[
+            {source: 0, target: 1},
+            {source: 1, target: 2},
+            {source: 2, target: 3},
+            {source: 3, target: 4}
+        ]
+    }
+
+    var link = g
+        .selectAll("line")
+        .data(data.links)
+        .enter()
+        .append("line")
+        .style("stroke", "#aaa")
+
+    // Initialize the nodes
+    var nodes = svg
+        .selectAll("circle")
+        .data(data.nodes)
+        .enter()
+        .append("g")
+        .attr("id","nodes");
+        
+    var circles = nodes.append("circle")
+        .attr("r", 40)
+        .style("fill", "#69b3a2")
+
+    var textYears = nodes.append("text")
+        .attr("text-align","center") 
+        .attr("text-anchor","middle")
+        .text(function(d){return d.year;})
+
+    var textTitles = nodes.append("text")
+        .attr("text-align","center") 
+        .attr("text-anchor","middle")
+        .text(function(d){return d.name;})
+
+    var textVals = nodes.append("text")
+        .attr("text-align","center") 
+        .attr("text-anchor","middle")
+        .text("")
+
+    var simulation = d3.forceSimulation(data.nodes)
+        .force("charge", d3.forceManyBody().strength(-100))
+        .force("link", d3.forceLink(data.links).id(function(d,i){return d.id}).distance(300).strength(1))
+        .force("x", d3.forceX(function(d,i){return width*i/data.nodes.length}))
+        .force("y", d3.forceY(height/2))
+        .force("collide", d3.forceCollide(42))
+        .stop()
+        
+    simulation.restart()
+        .on("tick",ticked)
+        .on("end",ended);
+
+    var xOffset = 200
+
+    function ticked() {
+        link
+            .attr("x1", function(d) { return d.source.x+xOffset; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x+xOffset; })
+            .attr("y2", function(d) { return d.target.y; });
+    
+        circles
+            .attr("cx", function (d) { return d.x+6+xOffset; })
+            .attr("cy", function(d) { return d.y-6; });
+
+        textYears
+            .attr("x", function(d) { return d.x+6+xOffset;})
+            .attr("y", function(d) {return d.y;})
+
+        textTitles
+            .attr("x", function(d) { return d.x+6+xOffset;})
+            .attr("y", function(d) { return d.y+50;})
+
+        textVals
+            .attr("x", function(d) { return d.x+6+xOffset;})
+            .attr("y", function(d) { return d.y+80;})
+    }
+
+    function ended(){
+        textVals
+            .text(function(d){return d.value})
+    }
+
+        
+
 }
