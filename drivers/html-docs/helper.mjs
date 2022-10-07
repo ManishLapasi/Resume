@@ -59,8 +59,8 @@ function createNodes(data, rScale, iniX, iniY){
     const nodes = data.map(d => ({
         ...d,
         radius: rScale(+d.value),
-        x : Math.random()*100 + iniX,
-        y : Math.random()*100 + iniY
+        x : Math.random()*600 ,
+        y : Math.random()*800 
     }))
     return nodes;
 }
@@ -136,6 +136,14 @@ function skillsEle(){
     .domain(["1", "2", "3", "5", "99"])
     .range(["#0074D9", "#7FDBFF", "#39CCCC", "#3D9970", "#AAAAAA"]);
 
+    // strength to apply to the position forces
+    const forceStrength = 0.03;
+
+    // charge is dependent on size of the bubble, so bigger towards the middle
+    function charge(d) {
+        return Math.pow(d.radius, 2.0) * 0.01
+    }
+
     function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal, yBase){
         
         var g = selector.append("g").attr("id","item1")
@@ -143,16 +151,8 @@ function skillsEle(){
         // location to centre the bubbles
         const centre = { x: width/2, y: height/2 };
 
-        // strength to apply to the position forces
-        const forceStrength = 0.03;
-
-        // charge is dependent on size of the bubble, so bigger towards the middle
-        function charge(d) {
-            return Math.pow(d.radius, 2.0) * 0.01
-        }
-
         // create a force simulation and add forces to it
-        var simulation = d3.forceSimulation()
+        const simulation = d3.forceSimulation()
         .force('charge', d3.forceManyBody().strength(charge))
         .force('x', d3.forceX().strength(forceStrength).x(centre.x))
         .force('y', d3.forceY().strength(forceStrength).y(centre.y))
@@ -170,34 +170,31 @@ function skillsEle(){
             .domain([0,maxSize])
             .range([25,50])
 
-        nodes = createNodes(data, rScale, iniX, iniY);
+        const nodes = createNodes(data, rScale, iniX, iniY);
 
         var elements = g.selectAll('.bubble')
-        .data(nodes, d => d.id)
-        .enter()
-        .append('g')
+            .data(nodes, d => d.id)
+            .enter()
+            .append('g')
 
-        bubbles = elements
-        .append('circle')
-        .classed('bubble', true)
-        .attr('r', d => d.radius)
-        .attr('fill', d => fillColour(d.value))
+        var bubbles = elements
+            .append('circle')
+            .classed('bubble', true)
+            .attr('r', d => d.radius)
+            .attr('fill', d => fillColour(d.value))
 
         // labels
-        labels = elements
-        .append('text')
-        .attr('dy', '.3em')
-        .style('text-anchor', 'middle')
-        .style('font-size', 10)
-        .text(d => d.id)
+        var labels = elements
+            .append('text')
+            .attr('dy', '.3em')
+            .style('text-anchor', 'middle')
+            .style('font-size', 10)
+            .text(d => d.id)
 
         // set simulation's nodes to our newly created nodes array
         // simulation starts running automatically once nodes are set
         simulation.nodes(nodes)
-        .on('tick', ticked)
-        .restart();
-
-        function ticked() {
+        .on('tick', function(d){
             bubbles
               .attr('cx', d => d.x)
               .attr('cy', d => d.y)
@@ -205,11 +202,12 @@ function skillsEle(){
             labels
               .attr('x', d => d.x)
               .attr('y', d => d.y)
-          }
+        })
+        .restart();
 
         selector.append("text")
             .attr("x",centre.x + translateX)
-            .attr("y",centre.y + yBase + translateY)
+            .attr("y",yBase + translateY)
             .style("text-align","center")
             .text(textVal);
     }
@@ -250,16 +248,9 @@ function skillsEle(){
 
     barchart(600, 200, areas, svg, 200, 500);
 
-    chart(300, 400, languages, svg, 0, 50, 200, 0, "Languages", 125);
-    var t1 = setTimeout(function(){
-        chart(300, 400, frameWorks, svg, 250, 50, 400, 500, "Frameworks", 225);
-        }, 2000)
-    var t2 = setTimeout(function(){
-        chart(300, 400, tools, svg, 550, 50, 600, 300, "Tools", 200);
-        }, 4000)
-    timeouts.push(t1);
-    timeouts.push(t2);
-
+    chart(300, 400, languages, svg, 0, 50, 200, 0, "Languages", 40);
+    chart(300, 400, frameWorks, svg, 325, 50, 400, 500, "Frameworks", 40);
+    chart(300, 400, tools, svg, 650, 50, 600, 300, "Tools", 40);
 }
 
 function expEle(){
@@ -272,7 +263,7 @@ function expEle(){
     var data = {
         "nodes":[
             {id: 0, name: "GreyOrange Robotics", year: "2019",value: "Soft-dev Intern ]%Worked on path planning algorithms ]%Implemented binary heaps to reduce ]computation time ]%Programmed real-time path-plotting"},
-            {id: 1, name: "SpaceX", year: "2019", value: "Hyperloop Pod Competition ]%Worked on a prototype hyperloop pod ]%Software processing behind the propulsion systems ]%Team-lead, propulsion subsystem ]%Finished 10th at the finals"},
+            {id: 1, name: "SpaceX", year: "2019", value: "Hyperloop Pod Competition ]%Worked on a prototype hyperloop pod ]%Software processing behind propulsion systems ]%Team-lead, propulsion subsystem ]%Finished 10th at the finals"},
             {id: 2, name: "Insti", year: "2020", value: "Graduated in 2020 ]%Masters degree in robotics ]%Paper on UAV path planning"},
             {id: 3, name: "Honeywell", year: "2020", value: "SWE / Sire Reliability Engineer ]%Worked on IoT systems ]%Worked on Identity and Access Management"},
             {id: 4, name: "GaTech", year: "2022", value: "MS CS student"}
@@ -353,10 +344,13 @@ function expEle(){
         console.log(textTitles._groups[0]);
         var leftAlign = "8%";
 
-        for(let exp in data.nodes){
-            var selector = svg.append("g").attr("width","100px").attr("height","100px")
-                .attr("transform", "translate("+textTitles._groups[0][exp].__data__.x.toString()+","+textTitles._groups[0][exp].__data__.y.toString()+")").append("text");
-            writeDesc(data.nodes[exp].value, "80px", selector, leftAlign, "80%");            
-        }
+        var t1 = setTimeout(function(){
+            for(let exp in data.nodes){
+                var selector = svg.append("g").attr("width","100px").attr("height","100px")
+                    .attr("transform", "translate("+textTitles._groups[0][exp].__data__.x.toString()+","+textTitles._groups[0][exp].__data__.y.toString()+")").append("text");
+                writeDesc(data.nodes[exp].value, "80px", selector, leftAlign, "80%");            
+            }
+            }, 1)
+        timeouts.push(t1);     
     }
 }
