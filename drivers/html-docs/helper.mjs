@@ -1,15 +1,7 @@
-var timeouts = [];
-
-function clearTimeouts(){
-    for(let i in timeouts){
-        clearTimeout(timeouts[i]);
-    }
-    timeouts = [];
-}
+var otherExec = false
 
 function homeEle(){
-
-    clearTimeouts();
+    otherExec = false;
     d3.select("#main").selectAll("*").remove();
 
     var svg = d3.select("#main");
@@ -59,7 +51,7 @@ function createNodes(data, rScale, iniX, iniY){
     const nodes = data.map(d => ({
         ...d,
         radius: rScale(+d.value),
-        x : Math.random()*600 ,
+        x : Math.random()*1000 ,
         y : Math.random()*800 
     }))
     return nodes;
@@ -84,7 +76,7 @@ function writeDesc(data, dyIni, selector, dxIni, fontSize){
 }
 
 function skillsEle(){
-    clearTimeouts();
+    otherExec = false;
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
     var leftAlign = "70%"
@@ -254,7 +246,7 @@ function skillsEle(){
 }
 
 function expEle(){
-    clearTimeouts();
+    otherExec = true
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");
@@ -262,11 +254,11 @@ function expEle(){
 
     var data = {
         "nodes":[
-            {id: 0, name: "GreyOrange Robotics", year: "2019",value: "Soft-dev Intern ]%Worked on path planning algorithms ]%Implemented binary heaps to reduce ]computation time ]%Programmed real-time path-plotting"},
-            {id: 1, name: "SpaceX", year: "2019", value: "Hyperloop Pod Competition ]%Worked on a prototype hyperloop pod ]%Software processing behind propulsion systems ]%Team-lead, propulsion subsystem ]%Finished 10th at the finals"},
-            {id: 2, name: "Insti", year: "2020", value: "Graduated in 2020 ]%Masters degree in robotics ]%Paper on UAV path planning"},
-            {id: 3, name: "Honeywell", year: "2020", value: "SWE / Sire Reliability Engineer ]%Worked on IoT systems ]%Worked on Identity and Access Management"},
-            {id: 4, name: "GaTech", year: "2022", value: "MS CS student"}
+            {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on path planning algorithms ]%Implemented binary heaps to reduce ]computation time ]%Programmed real-time path-plotting"},
+            {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Software processing behind propulsion systems ]%Team-lead, propulsion subsystem ]%Finished 10th at the finals"},
+            {id: 2, name: "Insti", year: "2020", position: "Graduated in 2020",value: "%Masters degree in robotics ]%Paper on UAV path planning"},
+            {id: 3, name: "Honeywell", year: "2020", position: "SWE / Sire Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and Access Management"},
+            {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:""}
         ],
         "links":[
             {source: 0, target: 1},
@@ -305,6 +297,11 @@ function expEle(){
         .attr("text-anchor","middle")
         .text(function(d){return d.name;})
 
+    var textPos = nodes.append("text")
+        .attr("text-align","center") 
+        .attr("text-anchor","middle")
+        .text(function(d){return d.position;})
+
     var simulation = d3.forceSimulation(data.nodes)
         .force("charge", d3.forceManyBody().strength(-100))
         .force("link", d3.forceLink(data.links).id(function(d,i){return d.id}).distance(300).strength(1))
@@ -337,20 +334,20 @@ function expEle(){
         textTitles
             .attr("x", function(d) { return d.x+6+xOffset;})
             .attr("y", function(d) { return d.y+50;})
+        textPos
+            .attr("x", function(d) { return d.x+6+xOffset;})
+            .attr("y", function(d) { return d.y+75;})
 
     }
 
     function ended(){
-        console.log(textTitles._groups[0]);
-        var leftAlign = "8%";
-
-        var t1 = setTimeout(function(){
+        if(otherExec==true){
+            var leftAlign = "8%";
             for(let exp in data.nodes){
                 var selector = svg.append("g").attr("width","100px").attr("height","100px")
                     .attr("transform", "translate("+textTitles._groups[0][exp].__data__.x.toString()+","+textTitles._groups[0][exp].__data__.y.toString()+")").append("text");
-                writeDesc(data.nodes[exp].value, "80px", selector, leftAlign, "80%");            
+                writeDesc(data.nodes[exp].value, "100px", selector, leftAlign, "80%");            
             }
-            }, 1)
-        timeouts.push(t1);     
+        }     
     }
 }
