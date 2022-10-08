@@ -69,21 +69,22 @@ function skillsEle(){
     otherExec = false;
     d3.select("#main").selectAll("*").remove();
     var svg = d3.select("#main");
-    var leftAlign = "70%"
+    var leftAlign = "73%"
     var text = svg.append("text").attr("id","homeDesc")
-    var para1 = "My background in soft-dev is equal parts ]academic and professional. I've taken up ]courses on the mathematics behind ]software tech and on their applications. ]I've applied these learnings at my ]internships while upskilling myself with ]the current industry standards. ] ] ]I'm a huge believer in automation - if there's ]a way to automate a menial task, I code away.";
-    var para2 = "I've interned at a few software-based companies ]and worked as a soft-dev / site-reliability ]engineer. These make up the bulk of my expertise. ]I've also worked on college-level projects ]and written a paper in UAV path-planning.";
+    var para1 = "My background in soft-dev is equal parts ]academic and professional. I've taken ]courses on the mathematics behind ]software tech and on their applications. ]I've applied these learnings at my ]internships while upskilling myself with ]the current industry standards. ] ] ]I'm a huge believer in automation - if ]there's a way to automate a menial task, ]I code away.";
+    var para2 = "I've interned at a few software companies ]and worked as a soft-dev / site-reliability ]engineer. These make up the bulk of my ]expertise. I've also worked on collegiate ]projects and written a paper on ]UAV path-planning.";
    
-    writeDesc(para1, "170px", text, leftAlign, "100%");
-    writeDesc(para2, "130px", text, leftAlign, "100%");
+    writeDesc(para1, "140px", text, leftAlign, "100%");
+    writeDesc(para2, "110px", text, leftAlign, "100%");
 
     var languages = [
-        {id:"python", value: 10},
+        {id:"Python", value: 10},
         {id:"C++", value: 4},
         {id:"R", value: 4},
-        {id:"Powershell", value: 4},
+        {id:"Powershell", value: 5},
         {id:"SQL", value: 8},
-        {id:"NodeJS", value: 8}
+        {id:"NodeJS", value: 8},
+        {id:"Erlang", value: 6}
     ];
 
     var tools = [
@@ -116,7 +117,9 @@ function skillsEle(){
     // set up colour scale
     const fillColour = d3.scaleOrdinal()
     .domain(["1", "2", "3", "5", "99"])
-    .range(['#f0f9e8','#ccebc5','#a8ddb5','#7bccc4','#43a2ca','#0868ac']);
+    //.range(['#f0f9e8','#ccebc5','#a8ddb5','#7bccc4','#43a2ca','#0868ac']);
+    //.range(['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']);
+    .range(['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6','#ffffcc']);
 
     // strength to apply to the position forces
     const forceStrength = 0.03;
@@ -150,7 +153,7 @@ function skillsEle(){
         // radius scale !!
         const rScale = d3.scalePow().exponent(2)
             .domain([0,maxSize])
-            .range([25,45])
+            .range([25,50])
 
         const nodes = createNodes(data, rScale, iniX, iniY);
         const nodeDict = {}
@@ -192,6 +195,8 @@ function skillsEle(){
             .attr('dy', '.3em')
             .style('text-anchor', 'middle')
             .style('font-size', 10)
+            .style('stroke',"#5A5A5A")
+            .style('font-family',"poppins-thin")
             .attr("id","skillsDesc")
             .text(d => d.id)
 
@@ -237,7 +242,8 @@ function skillsEle(){
             .attr("x", "0")
             .attr("y", function(d){return yScale(d.id)})
             .attr("width", function(d){return xScale(d.value)})
-            .attr("height", yScale.bandwidth());
+            .attr("height", yScale.bandwidth())
+            .attr("fill","#cbd5e8");
 
         g.selectAll(".text")
             .data(data)
@@ -248,15 +254,16 @@ function skillsEle(){
             .attr("text-anchor","end")
             .attr("y",function(d){return yScale(d.id);})
             .attr("dy",yScale.bandwidth())
-            .attr("stroke","rgb(85, 33, 32)")
+            .style("stroke","#E2E2E2")
+            .style("fill","#E2E2E2")
             .text(function(d){return d.id;});
     }
 
     barchart(600, 200, areas, svg, 200, 500);
 
-    chart(300, 400, frameWorks, svg, 0, 50, 200, 0, "Frameworks", 40);
-    chart(300, 400, languages, svg, 300, 50, 400, 500, "Languages", 40);
-    chart(300, 400, tools, svg, 600, 50, 600, 300, "Tools", 40);
+    chart(300, 400, languages, svg, -10, 50, 200, 0, "Languages", 40);
+    chart(300, 400, frameWorks, svg, 300, 50, 400, 500, "Frameworks", 40);
+    chart(300, 400, tools, svg, 650, 50, 600, 300, "Tools", 40);
 }
 
 function expEle(){
@@ -268,11 +275,11 @@ function expEle(){
 
     var data = {
         "nodes":[
-            {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on path planning algorithms ]%Implemented binary heaps to reduce ]computation time ]%Programmed real-time path-plotting"},
-            {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Software processing behind ]propulsion systems ]%Team-lead, propulsion subsystem ]%Finished 10th at the finals"},
-            {id: 2, name: "Insti", year: "2020", position: "Graduated in 2020",value: "%Masters degree in robotics ]%Paper on UAV path planning"},
-            {id: 3, name: "Honeywell", year: "2020", position: "SWE / Sire Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and Access ]Management"},
-            {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine Learning and ]Artificial Intelligence"}
+            {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path ]planning algorithms ]%Implemented binary heaps to ]reduce computation time ]%Programmed real-time ]interactive path-plotting"},
+            {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype ]hyperloop pod ]%Team-lead for the ]propulsion subsystem ]%Finished 10th at the finals"},
+            {id: 2, name: "Insti", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning"},
+            {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and ]Access Management"},
+            {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine ]Learning and Artificial ]Intelligence"}
         ],
         "links":[
             {source: 0, target: 1},
@@ -304,6 +311,9 @@ function expEle(){
     var textYears = nodes.append("text")
         .attr("text-align","center") 
         .attr("text-anchor","middle")
+        .style("font-family","poppins-reg")
+        .style("fill","3d3d3d")
+        .style("stroke","3d3d3d")
         .text(function(d){return d.year;})
 
     var textTitles = nodes.append("text")
@@ -320,8 +330,8 @@ function expEle(){
 
     var simulation = d3.forceSimulation(data.nodes)
         .force("charge", d3.forceManyBody().strength(-100))
-        .force("link", d3.forceLink(data.links).id(function(d,i){return d.id}).distance(300).strength(1))
-        .force("x", d3.forceX(function(d,i){return width*i/data.nodes.length}))
+        .force("link", d3.forceLink(data.links).id(function(d,i){return d.id}).distance(350).strength(1))
+        .force("x", d3.forceX(function(d,i){return width*i/data.nodes.length+15}))
         .force("y", d3.forceY(height/2))
         .force("collide", d3.forceCollide(42))
         .stop()
@@ -349,10 +359,10 @@ function expEle(){
 
         textTitles
             .attr("x", function(d) { return d.x+6+xOffset;})
-            .attr("y", function(d) { return d.y+50;})
+            .attr("y", function(d) { return d.y+60;})
         textPos
             .attr("x", function(d) { return d.x+6+xOffset;})
-            .attr("y", function(d) { return d.y+75;})
+            .attr("y", function(d) { return d.y+85;})
 
     }
 
@@ -362,7 +372,7 @@ function expEle(){
             for(let exp in data.nodes){
                 var selector = svg.append("g").attr("width","100px").attr("height","100px")
                     .attr("transform", "translate("+textTitles._groups[0][exp].__data__.x.toString()+","+textTitles._groups[0][exp].__data__.y.toString()+")").append("text").attr("id","expDesc");
-                writeDesc(data.nodes[exp].value, "100px", selector, leftAlign, "80%");            
+                writeDesc(data.nodes[exp].value, "120px", selector, leftAlign, "80%");            
             }
         }
         otherExec = false;     

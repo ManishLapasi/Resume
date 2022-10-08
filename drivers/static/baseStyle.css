@@ -5,9 +5,26 @@
     fill: aliceblue;
   }
 
+@font-face {
+    font-family: 'poppins-reg';
+    src: url("fonts/Poppins/Poppins-Regular.ttf") format('truetype');
+    stroke: aliceblue;
+    fill: aliceblue;
+  }
+
+@font-face {
+  font-family: 'poppins-med';
+  src: url("fonts/Poppins/Poppins-Medium.ttf") format('truetype');
+}
+
+@font-face {
+  font-family: 'poppins-thin';
+  src: url("fonts/Poppins/Poppins-Thin.ttf") format('truetype');
+}
+
 html {
-  background-color:rgb(41, 101, 123);
-  font-family: monospace;
+  background-color:#2C5F78;
+  font-family: poppins-thin;
   font-size: large;
 }
 
@@ -34,8 +51,8 @@ html {
 
 #navEle {
   padding-top: 1vh;
-  padding-left: 70vw;
-  width: 25vw;
+  padding-left: 65vw;
+  width: 30vw;
   height: 5vh;
   display: inline-block;
   padding-right: 0%;
@@ -43,6 +60,7 @@ html {
   vertical-align: top;
   animation: fadeInDown 2s;
 }
+
 
 ul {
   list-style-type: none;
@@ -59,11 +77,14 @@ li a {
   text-align: center;
   text-anchor: middle;
   padding: 14px 16px;
+  color: #E2E2E2;
 }
 
 li a:hover {
-  color: rgb(85, 134, 64);
+  color: #5A5A5A;
   background-color:lemonchiffon;
+  opacity: 0.5;
+  font-family: poppins-med;
 }
 
 
@@ -72,17 +93,24 @@ li a:hover {
   color: white;
 }
 
-#expDesc {
-  outline: red;
-  outline-offset: 4px;
-}
-
 #homeDesc {
   animation: fadeInDown 2s;
-  stroke: aliceblue;
-  fill: aliceblue;
+  stroke: #f0e3d2;
+  fill: #f0e3d2;
 }
 
 #skillsDesc {
   stroke: rgb(15, 33, 39);
+}
+
+#expTitles, #expPos {
+  font-family: poppins-thin;
+  stroke: #f0e3d2;
+  fill: #f0e3d2;
+}
+
+#expDesc {
+  font-family: poppins-thin;
+  stroke: #f0e3d2;
+  fill: #f0e3d2;
 }
