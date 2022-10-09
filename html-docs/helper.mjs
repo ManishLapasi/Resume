@@ -1,13 +1,86 @@
 var otherExec = false
 
+var expData = {
+    "nodes":[
+        {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path ]planning algorithms ]%Implemented binary heaps to ]reduce computation time ]%Programmed real-time ]interactive path-plotting", skills: ["Python", "Erlang", "C++"]},
+        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype ]hyperloop pod ]%Team-lead for the ]propulsion subsystem ]%Finished 10th at the finals", skills: ["Python"]},
+        {id: 2, name: "Insti", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning", skills: ["Python"]},
+        {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and ]Access Management", skills: ["Python"]},
+        {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine ]Learning and Artificial ]Intelligence", skills: ["Python"]}
+    ],
+    "links":[
+        {source: 0, target: 1},
+        {source: 1, target: 2},
+        {source: 2, target: 3},
+        {source: 3, target: 4}
+    ]
+}
+
+var languages = [
+    {id:"Python", value: 10},
+    {id:"C++", value: 4},
+    {id:"R", value: 4},
+    {id:"Powershell", value: 5},
+    {id:"SQL", value: 8},
+    {id:"NodeJS", value: 8},
+    {id:"Erlang", value: 6}
+];
+
+var tools = [
+    {id:"Docker", value: 8},
+    {id:"Terraform", value: 9},
+    {id:"Ansible", value: 6},
+    {id:"Kubernetes", value: 8},
+    {id:"Grafana", value: 8},
+    {id:"Prometheus", value: 8},
+    {id:"Matlab", value: 6},
+    {id:"Azure", value: 8}
+];
+
+var frameWorks = [
+    {id:"Tensorflow", value: 6},
+    {id:"Flask", value: 8},
+    {id:"ReactJS", value: 6},
+    {id:"D3", value: 8},
+    {id:"MongoDB", value: 6},
+    {id:"Neo4j", value: 6}
+];
+
+var areas = [
+    {id:"Back-end", value: 8},
+    {id:"Front-end", value: 6},
+    {id:"Reliability", value: 8},
+    {id:"Dev-Ops", value: 6}
+];
+
+// set up colour scale
+const fillColour = d3.scaleOrdinal()
+.domain(["1", "2", "3", "5", "99"])
+//.range(['#f0f9e8','#ccebc5','#a8ddb5','#7bccc4','#43a2ca','#0868ac']);
+//.range(['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']);
+.range(['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6','#ffffcc']);
+
 /*
 document.body.onmousemove = function(event){
     const {x, y} = event;
     console.log(x,y);
-    var dot = d3.select("#main").append("circle").attr("id","mouseTrial").attr("r","5px").style("stroke","red").style("fill","red").attr("cx",x).attr("cy",y);
-    setTimeout(() => dot.remove(), 500);
+    var dot = d3.select("#main").append("circle").attr("id","mouseTrial").attr("r","5px").style("stroke","grey").style("fill","grey").style("opacity","0.3").attr("cx",x).attr("cy",y);
+    setTimeout(() => dot.remove(), 2000);
 }
 */
+const cursor = document.getElementById('cursor');
+
+document.body.onmousemove = (event) => {
+    cursor.setAttribute("style", "top: "+(event.y - 10)+"px; left: "+(event.x - 10)+"px;")
+}
+
+document.body.onclick = () => {
+    cursor.classList.add("expand");
+
+    setTimeout(() => {
+        cursor.classList.remove("expand");
+    }, 500)
+}
 
 function homeEle(){
     otherExec = false;
@@ -58,7 +131,6 @@ function createNodes(data, rScale, iniX, iniY){
 
 function writeDesc(data, dyIni, selector, dxIni, fontSize, id){
     var p = data.replace(new RegExp('%', 'g'),"\u2022 ").split("]");
-    console.log(p);
     for(let line in p){    
         if(line==0){dy = dyIni;}
         else{dy = "25px";}
@@ -85,50 +157,6 @@ function skillsEle(){
    
     writeDesc(para1, "140px", text, leftAlign, "100%");
     writeDesc(para2, "110px", text, leftAlign, "100%");
-
-    var languages = [
-        {id:"Python", value: 10},
-        {id:"C++", value: 4},
-        {id:"R", value: 4},
-        {id:"Powershell", value: 5},
-        {id:"SQL", value: 8},
-        {id:"NodeJS", value: 8},
-        {id:"Erlang", value: 6}
-    ];
-
-    var tools = [
-        {id:"Docker", value: 8},
-        {id:"Terraform", value: 9},
-        {id:"Ansible", value: 6},
-        {id:"Kubernetes", value: 8},
-        {id:"Grafana", value: 8},
-        {id:"Prometheus", value: 8},
-        {id:"Matlab", value: 6},
-        {id:"Azure", value: 8}
-    ];
-
-    var frameWorks = [
-        {id:"Tensorflow", value: 6},
-        {id:"Flask", value: 8},
-        {id:"ReactJS", value: 6},
-        {id:"D3", value: 8},
-        {id:"MongoDB", value: 6},
-        {id:"Neo4j", value: 6}
-    ];
-
-    var areas = [
-        {id:"Back-end", value: 8},
-        {id:"Front-end", value: 6},
-        {id:"Reliability", value: 8},
-        {id:"Dev-Ops", value: 6}
-    ];
-
-    // set up colour scale
-    const fillColour = d3.scaleOrdinal()
-    .domain(["1", "2", "3", "5", "99"])
-    //.range(['#f0f9e8','#ccebc5','#a8ddb5','#7bccc4','#43a2ca','#0868ac']);
-    //.range(['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']);
-    .range(['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6','#ffffcc']);
 
     // strength to apply to the position forces
     const forceStrength = 0.03;
@@ -169,9 +197,7 @@ function skillsEle(){
         for(let i in nodes){
             nodeDict[nodes[i].id] = {value: nodes[i].value, radius: nodes[i].radius, fill: fillColour(nodes[i].radius)}
         }
-        console.log(nodes);
-        console.log(nodeDict);
-
+        
         var elements = g.selectAll('.bubble')
             .data(nodes)
             .enter()
@@ -186,14 +212,11 @@ function skillsEle(){
             .attr("pointer-events","visible")
             .on("mouseover", function(d){
                 var thisItem = d3.select(this);
-                console.log(thisItem);
-                //console.log(thisItem._groups[0][0].__data__.radius);
                 thisItem.attr("r",nodeDict[thisItem._groups[0][0].__data__.id].radius+10)
                 .attr("fill", nodeDict[thisItem._groups[0][0].__data__.id].fill)
             })
             .on("mouseout", function(d){
                 var thisItem = d3.select(this);
-                //console.log(thisItem._groups[0][0].__data__.radius);
                 thisItem.attr("r",nodeDict[thisItem._groups[0][0].__data__.id].radius)
                 .attr("fill", nodeDict[thisItem._groups[0][0].__data__.id].fill)
             })
@@ -282,25 +305,9 @@ function expEle(){
     var g = svg.append("g").attr("id","item1");
     var width = 1300, height = 600;
 
-    var data = {
-        "nodes":[
-            {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path ]planning algorithms ]%Implemented binary heaps to ]reduce computation time ]%Programmed real-time ]interactive path-plotting"},
-            {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype ]hyperloop pod ]%Team-lead for the ]propulsion subsystem ]%Finished 10th at the finals"},
-            {id: 2, name: "Insti", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning"},
-            {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and ]Access Management"},
-            {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine ]Learning and Artificial ]Intelligence"}
-        ],
-        "links":[
-            {source: 0, target: 1},
-            {source: 1, target: 2},
-            {source: 2, target: 3},
-            {source: 3, target: 4}
-        ]
-    }
-
     var link = g
         .selectAll("line")
-        .data(data.links)
+        .data(expData.links)
         .enter()
         .append("line")
         .style("stroke", "#aaa")
@@ -308,14 +315,15 @@ function expEle(){
     // Initialize the nodes
     var nodes = svg
         .selectAll("circle")
-        .data(data.nodes)
+        .data(expData.nodes)
         .enter()
         .append("g")
         .attr("id","nodes");
         
     var circles = nodes.append("circle")
         .attr("r", 40)
-        .style("fill", "#69b3a2")
+        .attr("id",(d) => d.id)
+        .style("fill", "#69b3a2");
 
     var textYears = nodes.append("text")
         .attr("text-align","center") 
@@ -337,10 +345,10 @@ function expEle(){
         .attr("id","expPos")
         .text(function(d){return d.position;})
 
-    var simulation = d3.forceSimulation(data.nodes)
+    var simulation = d3.forceSimulation(expData.nodes)
         .force("charge", d3.forceManyBody().strength(-100))
-        .force("link", d3.forceLink(data.links).id(function(d,i){return d.id}).distance(350).strength(1))
-        .force("x", d3.forceX(function(d,i){return width*i/data.nodes.length+15}))
+        .force("link", d3.forceLink(expData.links).id(function(d,i){return d.id}).distance(350).strength(1))
+        .force("x", d3.forceX(function(d,i){return width*i/expData.nodes.length+15}))
         .force("y", d3.forceY(height/2))
         .force("collide", d3.forceCollide(42))
         .stop()
@@ -378,10 +386,10 @@ function expEle(){
     function ended(){
         if(otherExec==true){
             var leftAlign = "7%";
-            for(let exp in data.nodes){
+            for(let exp in expData.nodes){
                 var selector = svg.append("g").attr("width","100px").attr("height","100px")
                     .attr("transform", "translate("+textTitles._groups[0][exp].__data__.x.toString()+","+textTitles._groups[0][exp].__data__.y.toString()+")").append("text").attr("id","expDesc");
-                writeDesc(data.nodes[exp].value, "120px", selector, leftAlign, "80%");            
+                writeDesc(expData.nodes[exp].value, "120px", selector, leftAlign, "80%");            
             }
         }
         otherExec = false;     

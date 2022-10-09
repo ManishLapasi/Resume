@@ -12,7 +12,7 @@
     "start": "nodemon base.mjs",
     "watch": "nodemon",
     "build": "nodemon base.mjs",
-    "deploy": "npm run build && gh-pages -d build -b master"
+    "deploy": "npm run build && gh-pages -d build -b main"
   },
   "type": "module",
   "homepage": "https://manishlapasi.github.io/Resume"
