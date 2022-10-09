@@ -114,3 +114,7 @@ li a:hover {
   stroke: #f0e3d2;
   fill: #f0e3d2;
 }
+
+#mouseTrial {
+  animation: fadeInDown 2s;
+}

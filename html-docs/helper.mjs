@@ -1,9 +1,18 @@
 var otherExec = false
 
+/*
+document.body.onmousemove = function(event){
+    const {x, y} = event;
+    console.log(x,y);
+    var dot = d3.select("#main").append("circle").attr("id","mouseTrial").attr("r","5px").style("stroke","red").style("fill","red").attr("cx",x).attr("cy",y);
+    setTimeout(() => dot.remove(), 500);
+}
+*/
+
 function homeEle(){
     otherExec = false;
     d3.select("#main").selectAll("*").remove();
-
+    
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");
 
