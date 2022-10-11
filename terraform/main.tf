@@ -23,3 +23,19 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
     machine_type = "g1-small"
   }
 }
+
+resource "null_resource" "authSetup" {
+  provisioner "local-exec" {
+    command = "gcloud container clusters get-credentials my-gke-cluster"
+  }
+}
+
+resource "kubectl_manifest" "pod_deployment" {
+  depends_on = [null_resource.authSetup]
+  yaml_body = file("../kubernetes/node-deployment.yml")
+}
+
+resource "kubectl_manifest" "service_deployment" {
+  depends_on = [null_resource.authSetup]
+  yaml_body = file("../kubernetes/node-service.yml")
+}
