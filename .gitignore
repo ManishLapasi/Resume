@@ -1,0 +1,8 @@
+# ignoring sensitive info
+*.json
+
+# ignoring state files
+*.tfstate
+
+# ignore caches, modules
+.terraform

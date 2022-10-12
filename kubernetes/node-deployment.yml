@@ -16,10 +16,12 @@ spec:
     spec:
       containers:
       - name: node
-        image: gcr.io/myresweb/myreswed-kubernetes:v0.0.1
+        image: gcr.io/myresweb/myreswed-kubernetes@sha256:afcbe5721b2562b251f5d3f352b122f2ec829fa1d9d9af027954af80c892a502
         env:
         - name: NODE_ENV
           value: "development"
         - name: PORT
           value: "8081"
+      imagePullSecrets:
+      - name: my-secret
       restartPolicy: Always
