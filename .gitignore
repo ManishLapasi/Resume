@@ -2,7 +2,8 @@
 *.json
 
 # ignoring state files
-*.tfstate
+*.tfstate*
 
 # ignore caches, modules
 .terraform
+.terraform.*

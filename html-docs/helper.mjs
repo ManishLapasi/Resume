@@ -1,5 +1,28 @@
 var otherExec = false
 
+function getWidth() {
+    return Math.max(
+      document.body.scrollWidth,
+      document.documentElement.scrollWidth,
+      document.body.offsetWidth,
+      document.documentElement.offsetWidth,
+      document.documentElement.clientWidth
+    );
+  }
+  
+function getHeight() {
+    return Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.documentElement.clientHeight
+    );
+}
+  
+width = getWidth();
+height = getHeight();
+
 var expData = {
     "nodes":[
         {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path ]planning algorithms ]%Implemented binary heaps to ]reduce computation time ]%Programmed real-time ]interactive path-plotting", skills: ["Python", "Erlang", "C++"]},
@@ -55,7 +78,7 @@ var areas = [
 
 // set up colour scale
 const fillColour = d3.scaleOrdinal()
-.domain(["1", "2", "3", "5", "99"])
+.domain(["2", "4", "6", "8", "10"])
 //.range(['#f0f9e8','#ccebc5','#a8ddb5','#7bccc4','#43a2ca','#0868ac']);
 //.range(['#ffffcc','#c7e9b4','#7fcdbb','#41b6c4','#1d91c0','#225ea8','#0c2c84']);
 .range(['#fbb4ae','#b3cde3','#ccebc5','#decbe4','#fed9a6','#ffffcc']);
@@ -120,20 +143,21 @@ function homeEle(){
 }
 
 function createNodes(data, rScale, iniX, iniY){
+    var xInit = 2*width/3, yInit = 10*height/11
     const nodes = data.map(d => ({
         ...d,
         radius: rScale(+d.value),
-        x : Math.random()*1000 ,
-        y : Math.random()*800 
+        x : Math.random()*xInit ,
+        y : Math.random()*yInit 
     }))
     return nodes;
 }
 
-function writeDesc(data, dyIni, selector, dxIni, fontSize, id){
+function writeDesc(data, dyIni, selector, dxIni, fontSize){
     var p = data.replace(new RegExp('%', 'g'),"\u2022 ").split("]");
     for(let line in p){    
         if(line==0){dy = dyIni;}
-        else{dy = "25px";}
+        else{dy = (25*height/880).toString()+"px";}
         if(p[line]==" "){p[line] = "\u00A0"}
 
         selector.append("tspan")
@@ -149,14 +173,16 @@ function writeDesc(data, dyIni, selector, dxIni, fontSize, id){
 function skillsEle(){
     otherExec = false;
     d3.select("#main").selectAll("*").remove();
+    let width = getWidth(), height = getHeight();
+
     var svg = d3.select("#main");
     var leftAlign = "73%"
     var text = svg.append("text").attr("id","homeDesc")
     var para1 = "My background in soft-dev is equal parts ]academic and professional. I've taken ]courses on the mathematics behind ]software tech and on their applications. ]I've applied these learnings at my ]internships while upskilling myself with ]the current industry standards. ] ] ]I'm a huge believer in automation - if ]there's a way to automate a menial task, ]I code away.";
     var para2 = "I've interned at a few software companies ]and worked as a soft-dev / site-reliability ]engineer. These make up the bulk of my ]expertise. I've also worked on collegiate ]projects and written a paper on ]UAV path-planning.";
    
-    writeDesc(para1, "140px", text, leftAlign, "100%");
-    writeDesc(para2, "110px", text, leftAlign, "100%");
+    writeDesc(para1, (140*height/880).toString()+"px", text, leftAlign, Math.min(width/15,1000*height/880).toString()+"%");
+    writeDesc(para2, (110*height/880).toString()+"px", text, leftAlign, Math.min(width/15,1000*height/880).toString()+"%");
 
     // strength to apply to the position forces
     const forceStrength = 0.03;
@@ -166,7 +192,7 @@ function skillsEle(){
         return Math.pow(d.radius, 2.0) * 0.01
     }
 
-    function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal, yBase){
+    function chart(width, height, data, selector, translateX, translateY, iniX, iniY, textVal, yBase, screenWidth){
         
         var g = selector.append("g").attr("id","item1")
             .attr("transform","translate("+translateX+","+translateY+")");
@@ -190,7 +216,7 @@ function skillsEle(){
         // radius scale !!
         const rScale = d3.scalePow().exponent(2)
             .domain([0,maxSize])
-            .range([25,50])
+            .range([screenWidth/60,screenWidth/30])
 
         const nodes = createNodes(data, rScale, iniX, iniY);
         const nodeDict = {}
@@ -226,7 +252,7 @@ function skillsEle(){
             .append('text')
             .attr('dy', '.3em')
             .style('text-anchor', 'middle')
-            .style('font-size', 10)
+            .style('font-size', screenWidth/150)
             .style('stroke',"#5A5A5A")
             .style('font-family',"poppins-thin")
             .attr("id","skillsDesc")
@@ -291,19 +317,22 @@ function skillsEle(){
             .text(function(d){return d.id;});
     }
 
-    barchart(600, 200, areas, svg, 200, 500);
+    var chartWidth = width/5, chartHeight = height/2, barChartWidth = 2*width/5, barChartHeight = height/4;
 
-    chart(300, 400, languages, svg, -10, 50, 200, 0, "Languages", 40);
-    chart(300, 400, frameWorks, svg, 300, 50, 400, 500, "Frameworks", 40);
-    chart(300, 400, tools, svg, 650, 50, 600, 300, "Tools", 40);
+    barchart(barChartWidth, barChartHeight, areas, svg, 2*width/15, 500/880*height);
+
+    chart(chartWidth, chartHeight, languages, svg, -10, (50*height/880), 2*chartWidth/15, 0, "Languages", (40*height/880), width);
+    chart(chartWidth, chartHeight, frameWorks, svg, width/5, (50*height/880), 4*chartWidth/15, (500*height/880), "Frameworks", (40*height/880), width);
+    chart(chartWidth, chartHeight, tools, svg, 2*width/5+20, (50*height/880), 6*chartWidth/15, (300*height/880), "Tools", (40*height/880), width);
 }
 
 function expEle(){
     otherExec = true
     d3.select("#main").selectAll("*").remove();
+    let width = getWidth(), height = getHeight();
     var svg = d3.select("#main");
     var g = svg.append("g").attr("id","item1");
-    var width = 1300, height = 600;
+    var expWidth = width-200, expHeight = height-200;
 
     var link = g
         .selectAll("line")
@@ -321,7 +350,7 @@ function expEle(){
         .attr("id","nodes");
         
     var circles = nodes.append("circle")
-        .attr("r", 40)
+        .attr("r", (40*width/1500))
         .attr("id",(d) => d.id)
         .style("fill", "#69b3a2");
 
@@ -329,6 +358,7 @@ function expEle(){
         .attr("text-align","center") 
         .attr("text-anchor","middle")
         .style("font-family","poppins-reg")
+        .style("font-size",(100*width/1500).toString()+"%")
         .style("fill","3d3d3d")
         .style("stroke","3d3d3d")
         .text(function(d){return d.year;})
@@ -336,20 +366,22 @@ function expEle(){
     var textTitles = nodes.append("text")
         .attr("text-align","center") 
         .attr("text-anchor","middle")
+        .style("font-size",(100*width/1500).toString()+"%")
         .attr("id","expTitles")
         .text(function(d){return d.name;})
 
     var textPos = nodes.append("text")
         .attr("text-align","center") 
         .attr("text-anchor","middle")
+        .style("font-size",(100*width/1500).toString()+"%")
         .attr("id","expPos")
         .text(function(d){return d.position;})
 
     var simulation = d3.forceSimulation(expData.nodes)
         .force("charge", d3.forceManyBody().strength(-100))
-        .force("link", d3.forceLink(expData.links).id(function(d,i){return d.id}).distance(350).strength(1))
-        .force("x", d3.forceX(function(d,i){return width*i/expData.nodes.length+15}))
-        .force("y", d3.forceY(height/2))
+        .force("link", d3.forceLink(expData.links).id(function(d,i){return d.id}).distance(width/5).strength(1))
+        .force("x", d3.forceX(function(d,i){return expWidth*i/expData.nodes.length+15}))
+        .force("y", d3.forceY(expHeight/2))
         .force("collide", d3.forceCollide(42))
         .stop()
         
@@ -357,7 +389,7 @@ function expEle(){
         .on("tick",ticked)
         .on("end",ended);
 
-    var xOffset = 200
+    var xOffset = 2*width/15
 
     function ticked() {
         link
@@ -376,10 +408,10 @@ function expEle(){
 
         textTitles
             .attr("x", function(d) { return d.x+6+xOffset;})
-            .attr("y", function(d) { return d.y+60;})
+            .attr("y", function(d) { return d.y+(60*height/880);})
         textPos
             .attr("x", function(d) { return d.x+6+xOffset;})
-            .attr("y", function(d) { return d.y+85;})
+            .attr("y", function(d) { return d.y+(85*height/880);})
 
     }
 
@@ -387,9 +419,9 @@ function expEle(){
         if(otherExec==true){
             var leftAlign = "7%";
             for(let exp in expData.nodes){
-                var selector = svg.append("g").attr("width","100px").attr("height","100px")
+                var selector = svg.append("g").attr("width",(100*height/880).toString()+"px").attr("height",(100*height/880).toString()+"px")
                     .attr("transform", "translate("+textTitles._groups[0][exp].__data__.x.toString()+","+textTitles._groups[0][exp].__data__.y.toString()+")").append("text").attr("id","expDesc");
-                writeDesc(expData.nodes[exp].value, "120px", selector, leftAlign, "80%");            
+                writeDesc(expData.nodes[exp].value, (Math.max(width/1500, height/880)*(120)).toString()+"px", selector, leftAlign, (4*width/75).toString()+"%");            
             }
         }
         otherExec = false;     

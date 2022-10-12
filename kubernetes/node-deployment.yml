@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: node
-        image: gcr.io/myresweb/myreswed-kubernetes@sha256:afcbe5721b2562b251f5d3f352b122f2ec829fa1d9d9af027954af80c892a502
+        image: gcr.io/myresweb/myreswed-kubernetes@sha256:19c7170325664c627601ee59df544dcd37f3bf8397ca3ff252579599950eaff2
         env:
         - name: NODE_ENV
           value: "development"
