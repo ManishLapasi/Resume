@@ -39,6 +39,22 @@ var expData = {
     ]
 }
 
+var expData2 = {
+    "nodes":[
+        {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path planning algorithms ]%Implemented binary heaps to reduce computation time ]%Programmed real-time interactive path-plotting", skills: ["Python", "Erlang", "C++"]},
+        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Team-lead for the propulsion subsystem ]%Finished 10th at the finals", skills: ["Python"]},
+        {id: 2, name: "Insti", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning", skills: ["Python"]},
+        {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and Access Management", skills: ["Python"]},
+        {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine Learning and Artificial Intelligence", skills: ["Python"]}
+    ],
+    "links":[
+        {source: 0, target: 1},
+        {source: 1, target: 2},
+        {source: 2, target: 3},
+        {source: 3, target: 4}
+    ]
+}
+
 var languages = [
     {id:"Python", value: 10},
     {id:"C++", value: 4},
@@ -107,9 +123,13 @@ document.body.onclick = () => {
 
 function homeEle(){
     otherExec = false;
-    d3.select("#main").selectAll("*").remove();
-    
-    var svg = d3.select("#main");
+    d3.select("#main").remove();
+    let mb = document.getElementById("mainbody")
+    if(mb != null){mb.remove();}
+    let svg = d3
+    .select("body")
+    .append("svg")
+    .attr("id","main");
     var g = svg.append("g").attr("id","item1");
 
     var leftAlign = "10%";
@@ -172,10 +192,15 @@ function writeDesc(data, dyIni, selector, dxIni, fontSize){
 
 function skillsEle(){
     otherExec = false;
-    d3.select("#main").selectAll("*").remove();
+    d3.select("#main").remove();
+    let mb = document.getElementById("mainbody")
+    if(mb != null){mb.remove();}
+    let svg = d3
+    .select("body")
+    .append("svg")
+    .attr("id","main");
     let width = getWidth(), height = getHeight();
 
-    var svg = d3.select("#main");
     var leftAlign = "73%"
     var text = svg.append("text").attr("id","homeDesc")
     var para1 = "My background in soft-dev is equal parts ]academic and professional. I've taken ]courses on the mathematics behind ]software tech and on their applications. ]I've applied these learnings at my ]internships while upskilling myself with ]the current industry standards. ] ] ]I'm a huge believer in automation - if ]there's a way to automate a menial task, ]I code away.";
@@ -328,9 +353,13 @@ function skillsEle(){
 
 function expEle(){
     otherExec = true
-    d3.select("#main").selectAll("*").remove();
-    let width = getWidth(), height = getHeight();
-    var svg = d3.select("#main");
+    d3.select("#main").remove();
+    let mb = document.getElementById("mainbody")
+    if(mb != null){mb.remove();}
+    let svg = d3
+    .select("body")
+    .append("svg")
+    .attr("id","main");let width = getWidth(), height = getHeight();
     var g = svg.append("g").attr("id","item1");
     var expWidth = width-200, expHeight = height-200;
 
@@ -425,5 +454,47 @@ function expEle(){
             }
         }
         otherExec = false;     
+    }
+}
+
+function exp2(){
+    console.log("exp2 exec")
+    otherExec = false;
+    d3.select("#main").remove();
+    let mb = document.getElementById("mainbody")
+    if(mb != null){mb.remove();}
+    let mainBody = document.createElement("div")
+    mainBody.setAttribute("id","mainbody");
+    document.body.appendChild(mainBody);
+    for(let i in expData2.nodes){
+        
+        let btn = document.createElement("button");
+        btn.innerHTML = expData.nodes[i].name;
+        btn.className = "collapsible";
+        mainBody.appendChild(btn);
+        
+        let btncont = document.createElement("div")
+        btncont.setAttribute("class","content")
+        let btnp = document.createElement("p")
+        let btntextArr = expData2.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
+        for(let i in btntextArr){
+            console.log(btntextArr[i])
+            let btntext = document.createTextNode(btntextArr[i]);
+            btnp.appendChild(btntext);
+            let br = document.createElement("br")
+            btnp.appendChild(br);
+        }
+        btncont.appendChild(btnp);
+        mainBody.appendChild(btncont);
+
+        btn.addEventListener("click", function(){
+            let thisbtn = this;
+            thisbtn.classList.toggle("active");
+            let cont = document.getElementsByClassName("content");
+            for(let c of cont){
+                if(c !== thisbtn.nextElementSibling){c.classList.remove("active")}
+            }
+            thisbtn.nextElementSibling.classList.toggle("active");
+        })
     }
 }
