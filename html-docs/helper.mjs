@@ -24,24 +24,8 @@ height = getHeight();
 
 var expData = {
     "nodes":[
-        {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path ]planning algorithms ]%Implemented binary heaps to ]reduce computation time ]%Programmed real-time ]interactive path-plotting", skills: ["Python", "Erlang", "C++"]},
-        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype ]hyperloop pod ]%Team-lead for the ]propulsion subsystem ]%Finished 10th at the finals", skills: ["Python"]},
-        {id: 2, name: "Insti", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning", skills: ["Python"]},
-        {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and ]Access Management", skills: ["Python"]},
-        {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine ]Learning and Artificial ]Intelligence", skills: ["Python"]}
-    ],
-    "links":[
-        {source: 0, target: 1},
-        {source: 1, target: 2},
-        {source: 2, target: 3},
-        {source: 3, target: 4}
-    ]
-}
-
-var expData2 = {
-    "nodes":[
         {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path planning algorithms ]%Implemented binary heaps to reduce computation time ]%Programmed real-time interactive path-plotting", skills: ["Python", "Erlang", "C++"]},
-        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Team-lead for the propulsion subsystem ]%Finished 10th at the finals", skills: ["Python", "Flask"]},
+        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Team-lead for the propulsion subsystem ]%Finished 10th at the finals", skills: ["Python", "Matlab"]},
         {id: 2, name: "IIT Madras", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning", skills: ["Python", "Flask", "Matlab", "Tensorflow"]},
         {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and Access Management", skills: ["Python", "SQL", "Powershell", "Flask", "Terraform", "Ansible", "Kubernetes", "Docker", "Azure", "Prometheus", "Grafana", "ReactJS", "NodeJS"]},
         {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine Learning and Artificial Intelligence", skills: ["Python", "SQL", "NodeJS", "Flask", "D3", "Neo4j", "Docker", "Tensorflow", "MongoDB"]}
@@ -544,7 +528,7 @@ function exp2(){
     mbChild.id = "expDescBox";
     mainBody.appendChild(mbChild);
 
-    for(let i in expData2.nodes){
+    for(let i in expData.nodes){
         
         let btn = document.createElement("button");
         btn.innerHTML = expData.nodes[i].name;
@@ -554,7 +538,7 @@ function exp2(){
         let btncont = document.createElement("div")
         btncont.setAttribute("class","content")
         let btnp = document.createElement("p")
-        let btntextArr = expData2.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
+        let btntextArr = expData.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
         for(let i in btntextArr){
             //console.log(btntextArr[i])
             let btntext = document.createTextNode(btntextArr[i]);
@@ -707,7 +691,7 @@ function exp3(){
             });
     }
 
-    var expSkills = expData2.nodes.map((d) => d.name)
+    var expSkills = expData.nodes.map((d) => d.name)
     var nodeDict = {}
     for(let i in expSkills){
         nodeDict[parseFloat(i)] = {value: 5, radius: width/25, fill: rScale(50)}
@@ -737,7 +721,7 @@ function exp3(){
 
     expChart(defaults.expSkills, defaults.nodes, defaults.links, defaults.nodeDict, defaults.linkDist, defaults.forceStrength, defaults.chargeStrength, defaults.centre)
 
-    for(let i in expData2.nodes){        
+    for(let i in expData.nodes){        
         let btn = document.createElement("button");
         btn.innerHTML = expData.nodes[i].name;
         btn.className = "collapsible";
@@ -746,7 +730,7 @@ function exp3(){
         let btncont = document.createElement("div")
         btncont.setAttribute("class","content")
         let btnp = document.createElement("p")
-        let btntextArr = expData2.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
+        let btntextArr = expData.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
         for(let i in btntextArr){
             let btntext = document.createTextNode(btntextArr[i]);
             btnp.appendChild(btntext);
@@ -772,7 +756,7 @@ function exp3(){
             console.log(i, numActive);
             if(numActive!=-1){
                 var centre = { x: width/2, y: height/2+20 };
-                var expSkills = expData2["nodes"][numActive].skills
+                var expSkills = expData["nodes"][numActive].skills
                 var nodeDict = {}
                 for(let i in expSkills){
                     nodeDict[parseFloat(i)+1] = {value: combinedDict[expSkills[i]], radius: rScale(combinedDict[expSkills[i]]), fill: fillColour(rScale(combinedDict[expSkills[i]]))}
@@ -780,7 +764,7 @@ function exp3(){
                 nodeDict[0] = {value: 5, radius: width/15, fill: rScale(50)}
         
                 var nodes = []
-                nodes.push({id: 0, name:expData2.nodes[numActive].name, value:20, radius:width/15, x:centre.x, y:centre.y})
+                nodes.push({id: 0, name:expData.nodes[numActive].name, value:20, radius:width/15, x:centre.x, y:centre.y})
                 for(let i in expSkills){
                     nodes.push({id:parseFloat(i)+1, name:expSkills[i], value:combinedDict[expSkills[i]]})
                 }
