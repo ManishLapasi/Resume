@@ -213,8 +213,8 @@ function skillsEle(){
     var para1 = "My background in soft-dev is equal parts ]academic and professional. I've taken ]courses on the mathematics behind ]software tech and on their applications. ]I've applied these learnings at my ]internships while upskilling myself with ]the current industry standards. ] ] ]I'm a huge believer in automation - if ]there's a way to automate a menial task, ]I code away.";
     var para2 = "I've interned at a few software companies ]and worked as a soft-dev / site-reliability ]engineer. These make up the bulk of my ]expertise. I've also worked on collegiate ]projects and written a paper on ]UAV path-planning.";
    
-    writeDesc(para1, (140*height/880).toString()+"px", text, leftAlign, Math.min(width/15,1000*height/880).toString()+"%");
-    writeDesc(para2, (110*height/880).toString()+"px", text, leftAlign, Math.min(width/15,1000*height/880).toString()+"%");
+    writeDesc(para1, (140*height/880).toString()+"px", text, leftAlign, (Math.min(width/20,1000*height/1000)+10).toString()+"%");
+    writeDesc(para2, (110*height/880).toString()+"px", text, leftAlign, (Math.min(width/20,1000*height/1000)+10).toString()+"%");
 
     // strength to apply to the position forces
     const forceStrength = 0.03;
