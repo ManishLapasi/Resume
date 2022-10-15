@@ -1,5 +1,4 @@
 var otherExec = false
-
 function getWidth() {
     return Math.max(
       document.body.scrollWidth,
@@ -42,10 +41,10 @@ var expData = {
 var expData2 = {
     "nodes":[
         {id: 0, name: "GreyOrange Robotics", year: "2019",position: "Soft-dev Intern",value: "%Worked on optimizing path planning algorithms ]%Implemented binary heaps to reduce computation time ]%Programmed real-time interactive path-plotting", skills: ["Python", "Erlang", "C++"]},
-        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Team-lead for the propulsion subsystem ]%Finished 10th at the finals", skills: ["Python"]},
-        {id: 2, name: "Insti", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning", skills: ["Python"]},
-        {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and Access Management", skills: ["Python"]},
-        {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine Learning and Artificial Intelligence", skills: ["Python"]}
+        {id: 1, name: "SpaceX", year: "2019", position: "Hyperloop Pod Competition",value: "%Worked on a prototype hyperloop pod ]%Team-lead for the propulsion subsystem ]%Finished 10th at the finals", skills: ["Python", "Flask"]},
+        {id: 2, name: "IIT Madras", year: "2020", position: "M.Tech Robotics",value: "%Paper on UAV path planning", skills: ["Python", "Flask", "Matlab", "Tensorflow"]},
+        {id: 3, name: "Honeywell", year: "2020", position: "SWE/Site Reliability Engineer",value: "%Worked on IoT systems ]%Worked on Identity and Access Management", skills: ["Python", "SQL", "Powershell", "Flask", "Terraform", "Ansible", "Kubernetes", "Docker", "Azure", "Prometheus", "Grafana", "ReactJS", "NodeJS"]},
+        {id: 4, name: "GaTech", year: "2022", position: "MS CS student", value:"Specializing in Machine Learning and Artificial Intelligence", skills: ["Python", "SQL", "NodeJS", "Flask", "D3", "Neo4j", "Docker", "Tensorflow", "MongoDB"]}
     ],
     "links":[
         {source: 0, target: 1},
@@ -91,6 +90,14 @@ var areas = [
     {id:"Reliability", value: 8},
     {id:"Dev-Ops", value: 6}
 ];
+
+var combined = languages.concat(tools, frameWorks);
+console.log(combined);
+var combinedDict = {}
+for(let i in combined){
+    combinedDict[combined[i].id] = combined[i].value
+}
+console.log(combinedDict);
 
 // set up colour scale
 const fillColour = d3.scaleOrdinal()
@@ -167,8 +174,8 @@ function createNodes(data, rScale, iniX, iniY){
     const nodes = data.map(d => ({
         ...d,
         radius: rScale(+d.value),
-        x : Math.random()*xInit ,
-        y : Math.random()*yInit 
+        x : Math.random()*iniX ,
+        y : Math.random()*iniY 
     }))
     return nodes;
 }
@@ -241,9 +248,9 @@ function skillsEle(){
         // radius scale !!
         const rScale = d3.scalePow().exponent(2)
             .domain([0,maxSize])
-            .range([screenWidth/60,screenWidth/30])
+            .range([screenWidth/70,screenWidth/35])
 
-        const nodes = createNodes(data, rScale, iniX, iniY);
+        const nodes = createNodes(data, rScale, 2*screenWidth/3, 10*height/11);
         const nodeDict = {}
         for(let i in nodes){
             nodeDict[nodes[i].id] = {value: nodes[i].value, radius: nodes[i].radius, fill: fillColour(nodes[i].radius)}
@@ -277,7 +284,7 @@ function skillsEle(){
             .append('text')
             .attr('dy', '.3em')
             .style('text-anchor', 'middle')
-            .style('font-size', screenWidth/150)
+            .style('font-size', screenWidth/180)
             .style('stroke',"#5A5A5A")
             .style('font-family',"poppins-thin")
             .attr("id","skillsDesc")
@@ -463,29 +470,100 @@ function exp2(){
     d3.select("#main").remove();
     let mb = document.getElementById("mainbody")
     if(mb != null){mb.remove();}
+
     let mainBody = document.createElement("div")
     mainBody.setAttribute("id","mainbody");
     document.body.appendChild(mainBody);
+
+    var scene, camera, renderer;
+    var WIDTH  = window.innerWidth;
+    var HEIGHT = window.innerHeight;
+
+    var targetQuaternion = undefined;
+
+    function init(){
+        scene = new THREE.Scene();
+        initCamera();
+        initRenderer();
+    
+        initCube();
+        console.log(renderer);
+        var ambientLight = new THREE.AmbientLight(0x888888);
+        scene.add(ambientLight);
+        renderer.domElement.classList.add("flex-child");
+        renderer.domElement.id = "canvasCube";
+        mainBody.appendChild(renderer.domElement);
+    }
+
+    function initCamera() {
+        camera = new THREE.PerspectiveCamera(70, WIDTH / HEIGHT, 1, 10);
+        camera.position.set(0, 2, 5);
+        camera.lookAt(scene.position);
+    }
+
+    function initRenderer() {
+        renderer = new THREE.WebGLRenderer({ antialias: true }, { alpha: true });
+        renderer.setClearColor( 0x2C5f78 );
+        renderer.setSize(WIDTH/2, HEIGHT/2);
+    }
+
+    function initCube() {
+        cube = new THREE.Mesh(new THREE.CubeGeometry(2.5, 2.5, 2.5), new THREE.MeshNormalMaterial());
+        scene.add(cube);
+    }
+    
+    var SPEED = 0.005;
+
+    function rotateCube() {
+        cube.rotation.x -= SPEED * 2;
+        cube.rotation.y -= SPEED;
+        cube.rotation.z -= SPEED * 3;
+    }
+
+    function render(){
+        requestAnimationFrame(render);
+        if(targetQuaternion===undefined){rotateCube();}
+        else{
+            console.log("quaternion defined");
+            if ( ! cube.quaternion.equals( targetQuaternion ) ) {
+                console.log("quaternion rotation", cube, cube.quaternion);
+                var step = SPEED * 10;
+                cube.quaternion.rotateTowards(targetQuaternion, step);
+                console.log("quaternion after", cube.quaternion);
+            }
+
+        }
+        renderer.render(scene, camera);
+    }
+
+    init();
+    render();
+
+    let mbChild = document.createElement("div");
+    mbChild.classList.add("flex-child");
+    mbChild.id = "expDescBox";
+    mainBody.appendChild(mbChild);
+
     for(let i in expData2.nodes){
         
         let btn = document.createElement("button");
         btn.innerHTML = expData.nodes[i].name;
         btn.className = "collapsible";
-        mainBody.appendChild(btn);
+        mbChild.appendChild(btn);
         
         let btncont = document.createElement("div")
         btncont.setAttribute("class","content")
         let btnp = document.createElement("p")
         let btntextArr = expData2.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
         for(let i in btntextArr){
-            console.log(btntextArr[i])
+            //console.log(btntextArr[i])
             let btntext = document.createTextNode(btntextArr[i]);
             btnp.appendChild(btntext);
             let br = document.createElement("br")
             btnp.appendChild(br);
         }
         btncont.appendChild(btnp);
-        mainBody.appendChild(btncont);
+        mbChild.appendChild(btncont);
 
         btn.addEventListener("click", function(){
             let thisbtn = this;
@@ -495,6 +573,229 @@ function exp2(){
                 if(c !== thisbtn.nextElementSibling){c.classList.remove("active")}
             }
             thisbtn.nextElementSibling.classList.toggle("active");
+            let numActive = -1, currActive = 0
+            for(let c of cont){
+                if(c.classList.contains("active")){numActive = currActive; }
+                currActive++
+            }
+            console.log(i, numActive);
+            if(numActive >= 0){
+                targetQuaternion = new THREE.Quaternion();
+                targetQuaternion.setFromEuler( new THREE.Euler( Math.PI, Math.PI, 0 ) );
+            }
+            else{
+                targetQuaternion = undefined;
+            }
         })
     }
+}
+
+function exp3(){
+
+    console.log("exp3 exec")
+    otherExec = false;
+    d3.select("#main").remove();
+    let mb = document.getElementById("mainbody")
+    if(mb != null){mb.remove();}
+
+    let mainBody = document.createElement("div")
+    mainBody.setAttribute("id","mainbody");
+    document.body.appendChild(mainBody);
+
+    let mbChild = document.createElement("div");
+    mbChild.classList.add("flex-child");
+    mbChild.id = "expDescBox";
+    mainBody.appendChild(mbChild);
+
+    let mbChildSvgDiv = document.createElement("div");
+    mbChildSvgDiv.classList.add("flex-child");
+    mbChildSvgDiv.id = "expSvg";
+    mainBody.appendChild(mbChildSvgDiv);
+
+    let svg = d3.select("#expSvg")
+    .append("svg")
+    .attr("width","100%")
+    .attr("height","100%");
+
+    const maxSize= d3.max(combined, d => +d.value);
+
+    // radius scale !!
+    var rScale = d3.scalePow().exponent(2)
+        .domain([0,maxSize])
+        .range([width/60,width/30])
+
+    function expChart(skillList, nodes, links, nodeDict, linkDist, forceStrength, chargeStrength, centre){
+
+
+        // charge is dependent on size of the bubble, so bigger towards the middle
+        function charge(d) {
+            return Math.pow(d.radius, 2.0) * chargeStrength
+        }
+
+
+        svg.selectAll("*").remove();
+        var xOffset = 0;
+
+        var link = svg
+            .selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .style("stroke", "#aaa")
+            .style("opacity","0.2")
+
+        // yay, bubbles !!
+
+        var elements = svg.selectAll('.bubble')
+            .data(nodes)
+            .enter()
+            .append('g')
+        
+        var bubbles = elements
+            .append('circle')
+            .attr("id", d => d.id)
+            .attr('r', d => nodeDict[d.id].radius)
+            .attr('fill', d => nodeDict[d.id].fill)
+            .style("opacity","0.7")
+            .attr("pointer-events","visible")
+            .on("mouseover", function(d){
+                var thisItem = d3.select(this);
+                thisItem.attr("r",nodeDict[thisItem._groups[0][0].__data__.id].radius+10)
+                .attr("fill", nodeDict[thisItem._groups[0][0].__data__.id].fill)
+            })
+            .on("mouseout", function(d){
+                var thisItem = d3.select(this);
+                thisItem.attr("r",nodeDict[thisItem._groups[0][0].__data__.id].radius)
+                .attr("fill", nodeDict[thisItem._groups[0][0].__data__.id].fill)
+            })
+
+        // labels
+        var labels = elements
+            .append('text')
+            .attr('dy', '.3em')
+            .style('text-anchor', 'middle')
+            .style('font-size', width/150)
+            .style('stroke',"#5A5A5A")
+            .style('font-family',"poppins-thin")
+            .attr("id","skillsDesc")
+            .text(d => d.name)
+
+        // set simulation's nodes to our newly created nodes array
+        // simulation starts running automatically once nodes are set
+
+        // create a force simulation and add forces to it
+        const simulation = d3.forceSimulation(nodes)
+            .force('charge', d3.forceManyBody().strength(charge))
+            .force('x', d3.forceX().strength(forceStrength).x(centre.x))
+            .force('y', d3.forceY().strength(forceStrength).y(centre.y))
+            .force('link', d3.forceLink(links).id(function(d){return d.id}).distance(linkDist).strength(0.2))
+            .force('collision', d3.forceCollide().radius((d) => {return d.radius + 1}))
+            .on('tick', function(d){
+                bubbles
+                .attr('cx', d => d.x)
+                .attr('cy', d => d.y)
+            
+                labels
+                .attr('x', d => d.x)
+                .attr('y', d => d.y)
+
+                link
+                .attr("x1", function(d) { return nodes[d.source.id].x; })
+                .attr("y1", function(d) { return nodes[d.source.id].y; })
+                .attr("x2", function(d) { return nodes[d.target.id].x; })
+                .attr("y2", function(d) { return nodes[d.target.id].y; });
+            });
+    }
+
+    var expSkills = expData2.nodes.map((d) => d.name)
+    var nodeDict = {}
+    for(let i in expSkills){
+        nodeDict[parseFloat(i)] = {value: 5, radius: width/25, fill: rScale(50)}
+    }
+
+    var nodes = []
+    for(let i in expSkills){
+        nodes.push({id:parseFloat(i), name:expSkills[i], value:5})
+    }
+    nodes = createNodes(nodes, rScale, width/5, height/2);
+    var links = []
+    for(let i=0; i<expSkills.length-1; i++){
+        links.push({source:parseFloat(i), target:parseFloat(i)+1})
+    }
+    var centre = { x: width/4, y: height/2-50 };
+
+    var defaults = {
+        expSkills: expSkills,
+        nodes: nodes,
+        links: links,
+        nodeDict: nodeDict,
+        linkDist: width/7,
+        forceStrength: 0.01,
+        chargeStrength: -0.1,
+        centre: centre
+    }
+
+    expChart(defaults.expSkills, defaults.nodes, defaults.links, defaults.nodeDict, defaults.linkDist, defaults.forceStrength, defaults.chargeStrength, defaults.centre)
+
+    for(let i in expData2.nodes){        
+        let btn = document.createElement("button");
+        btn.innerHTML = expData.nodes[i].name;
+        btn.className = "collapsible";
+        mbChild.appendChild(btn);
+        
+        let btncont = document.createElement("div")
+        btncont.setAttribute("class","content")
+        let btnp = document.createElement("p")
+        let btntextArr = expData2.nodes[i].value.replace(new RegExp('%', 'g'),"\u2022 ").split(']')
+        for(let i in btntextArr){
+            let btntext = document.createTextNode(btntextArr[i]);
+            btnp.appendChild(btntext);
+            let br = document.createElement("br")
+            btnp.appendChild(br);
+        }
+        btncont.appendChild(btnp);
+        mbChild.appendChild(btncont);
+
+        btn.addEventListener("click", function(){
+            let thisbtn = this;
+            thisbtn.classList.toggle("active");
+            let cont = document.getElementsByClassName("content");
+            for(let c of cont){
+                if(c !== thisbtn.nextElementSibling){c.classList.remove("active")}
+            }
+            thisbtn.nextElementSibling.classList.toggle("active");
+            let numActive = -1, currActive = 0
+            for(let c of cont){
+                if(c.classList.contains("active")){numActive = currActive; }
+                currActive++
+            }
+            console.log(i, numActive);
+            if(numActive!=-1){
+                var centre = { x: width/2, y: height/2+20 };
+                var expSkills = expData2["nodes"][numActive].skills
+                var nodeDict = {}
+                for(let i in expSkills){
+                    nodeDict[parseFloat(i)+1] = {value: combinedDict[expSkills[i]], radius: rScale(combinedDict[expSkills[i]]), fill: fillColour(rScale(combinedDict[expSkills[i]]))}
+                }
+                nodeDict[0] = {value: 5, radius: width/15, fill: rScale(50)}
+        
+                var nodes = []
+                nodes.push({id: 0, name:expData2.nodes[numActive].name, value:20, radius:width/15, x:centre.x, y:centre.y})
+                for(let i in expSkills){
+                    nodes.push({id:parseFloat(i)+1, name:expSkills[i], value:combinedDict[expSkills[i]]})
+                }
+                nodes = createNodes(nodes, rScale, width/5, height/2);
+                var links = []
+                for(let i in expSkills){
+                    links.push({source:0, target:parseFloat(i)+1})
+                }
+                expChart(expSkills, nodes, links, nodeDict, width/6, 0.01, 0.005, centre)
+            }
+            else{
+                var centre = { x: width/2, y: height/2+20 };
+                expChart(defaults.expSkills, defaults.nodes, defaults.links, defaults.nodeDict, defaults.linkDist, defaults.forceStrength, defaults.chargeStrength, defaults.centre);
+            }
+        })
+    }
+
 }

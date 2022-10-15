@@ -51,6 +51,10 @@ app.get('/node_modules/d3/dist/d3.min.js', function(req, res) {
     res.sendFile(path.join(__dirname, 'node_modules/d3/dist', 'd3.min.js'));
 })
 
+app.get('/node_modules/three/build/three.min.js', function(req, res) {
+    res.sendFile(path.join(__dirname, 'node_modules/three/build', 'three.min.js'));
+})
+
 var server = app.listen(8081, function(){
     var host = server.address().address;
     var port = server.address().port;
